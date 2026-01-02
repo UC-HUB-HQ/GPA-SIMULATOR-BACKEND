@@ -27,12 +27,12 @@ export const extractDataFromTranscript = async (
           "Extract the faculty, department, and level information shown in the PDF.",
           "Each academic level consists of two semesters: First Semester and Second Semester.",
           "If the highest result in the PDF is for a First Semester, return the same level as the current level.",
-          "If the highest result in the PDF is for a Second Semester, return the next higher level as the current level.",
+          "If the highest result in the PDF is for a Second Semester, return the next higher level as the current level but if the transcript suggest this user has graduated or it is their final semester, return the current level.",
           "Do not guess values that are not present in the PDF.",
           "Return the result strictly in valid JSON format.",
           "Do not include explanations, markdown, or extra text outside JSON."
           "Ensure you return  faculty like this "FACULTY OF SCIENCE". All in upper case and start with FACULTY OF.",
-          "Ensure you return the level only e.g 100, 200, 300, 400, 500. Do not specify if the student has graduated, just specify their level only and this can only be gotten from the last level of the most recent semester. Do not make assumption. If it does not exist in the document leave it blank",
+          "Ensure you return the level only e.g 100, 200 etc Do not specify if the student has graduated, just specify their level only and this can only be gotten from the last level of the most recent semester. Do not make assumption. If it does not exist in the document leave it blank",
           "Ensure you return department name only do not attach DEPARTMENT OF, e.g COMPUTER SCIENCE, PHYSICS. no need for "DEPARTMENT OF"."
         ],
         exception: "If the uploaded document does not contain any of the required output information, and does not resemble an academic transcript or report, send this data in this exact output format {"error": "error message"}"
@@ -48,7 +48,7 @@ export const extractDataFromTranscript = async (
           "total_units_completed_ctnup": "number",
           "faculty": "string",
           "department": "string",
-          "inferred_current_level": "string" expected value 100, 200, 300, 400, 500,
+          "inferred_current_level": "string",
           "confidence": "number between 0 and 1"
         }
         if error = {
