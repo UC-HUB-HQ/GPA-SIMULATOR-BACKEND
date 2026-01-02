@@ -13,22 +13,22 @@ export async function POST(request: NextRequest) {
 
         if (!file) {
             return NextResponse.json(
-                { error: "No file uploaded" },
-                { status: 400 }
+              { message: "No file uploaded" },
+              { status: 400 }
             );
         }
 
         if (file.type !== "application/pdf") {
             return NextResponse.json(
-                { error: "Only PDF files are allowed" },
-                { status: 400 }
+              { message: "Only PDF files are allowed" },
+              { status: 400 }
             );
         }
 
         if (file.size > 5 * 1024 * 1024) {
             return NextResponse.json(
-                { error: "File exceeds 5MB limit" },
-                { status: 400 }
+              { message: "File exceeds 5MB limit" },
+              { status: 400 }
             );
         }
 
@@ -39,18 +39,17 @@ export async function POST(request: NextRequest) {
         const base64Pdf = buffer.toString("base64");
 
         const geminiResponse = await extractDataFromTranscript(
-          "base64Pdf",
+          base64Pdf,
           apiKey ?? ""
         );
 
         return NextResponse.json(
-            { data: geminiResponse},
+            { message: geminiResponse},
             { status: 200 }
         );
 
     }
     catch (error) {
-        console.log(error)
         return NextResponse.json(
             { message: "Error with extracting details from document", error },
             { status: 500 }

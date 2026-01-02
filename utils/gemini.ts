@@ -1,87 +1,167 @@
-import { GoogleGenAI } from "@google/genai";
-import { ThinkingLevel } from "@google/genai";
-import { Content } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+// import { Content } from "@google/genai";
+
+// export const extractDataFromTranscript = async (
+//   base64Pdf: string,
+//   apiKey: string
+// ) => {
+//   const ai = new GoogleGenAI({
+//     apiKey: apiKey,
+//   });
+
+//   const tools = [
+//     {
+//       googleSearch: {},
+//     },
+//   ];
+
+//   const config = {
+//     thinkingConfig: {
+//       thinkingLevel: ThinkingLevel.HIGH,
+//     },
+//     tools,
+//     systemInstruction: [
+//       {
+//         text: `{
+//   "task": "CGPA_PDF_ANALYSIS_AND_LEVEL_INFERENCE",
+//   "instructions": {
+//     "role": "You are an academic records analysis assistant.",
+//     "goal": "Extract CGPA-related information from a student's university result PDF and infer the correct current academic level.",
+//     "rules": [
+//       "Read and analyze the uploaded PDF academic result.",
+//       "Extract the student's CGPA.",
+//       "Extract the total course units completed (CTNUP).",
+//       "Extract the faculty, department, and level information shown in the PDF.",
+//       "Each academic level consists of two semesters: First Semester and Second Semester.",
+//       "If the highest result in the PDF is for a First Semester, return the same level as the current level.",
+//       "If the highest result in the PDF is for a Second Semester, return the next higher level as the current level.",
+//       "Do not guess values that are not present in the PDF.",
+//       "Return the result strictly in valid JSON format.",
+//       "Do not include explanations, markdown, or extra text outside JSON."
+//     ]
+//   },
+//   "input": {
+//     "document_type": "PDF",
+//     "description": "University CGPA result slip containing semester-by-semester academic records",
+//     "file": "{{CGPA_PDF_FILE}}"
+//   },
+//   "output_format": {
+//     "cgpa": "number",
+//     "total_units_completed_ctnup": "number",
+//     "faculty": "string",
+//     "department": "string",
+//     "inferred_current_level": "string",
+//     "confidence": "number between 0 and 1"
+//   }
+// }`,
+//       },
+//     ],
+//   };
+
+//   const model = 'gemini-3-flash-preview';
+  
+//   const contents: Content[] = [
+//     {
+//       role: "user",
+//       parts: [
+//         {
+//           inlineData: {
+//             mimeType: "application/pdf",
+//             data: base64Pdf,
+//           }
+//         },
+//       ],
+//     },
+//   ];
+
+//   const response = await ai.models.generateContent({
+//     model,
+//     config,
+//     contents,
+//   });
+
+//   return response;
+// };
+
 
 export const extractDataFromTranscript = async (
   base64Pdf: string,
   apiKey: string
 ) => {
-  const ai = new GoogleGenAI({
-    apiKey: apiKey,
-  });
 
-  const tools = [
-    {
-      googleSearch: {},
-    },
-  ];
+  const ai = new GoogleGenAI({ apiKey });
+
+  const modelId = "gemini-2.5-flash";
 
   const config = {
+    responseMimeType: "application/json",
     thinkingConfig: {
-      thinkingLevel: ThinkingLevel.HIGH,
+      thinkingBudget: 0,
     },
-    tools,
-    systemInstruction: [
-      {
-        text: `{
-  "task": "CGPA_PDF_ANALYSIS_AND_LEVEL_INFERENCE",
-  "instructions": {
-    "role": "You are an academic records analysis assistant.",
-    "goal": "Extract CGPA-related information from a student's university result PDF and infer the correct current academic level.",
-    "rules": [
-      "Read and analyze the uploaded PDF academic result.",
-      "Extract the student's CGPA.",
-      "Extract the total course units completed (CTNUP).",
-      "Extract the faculty, department, and level information shown in the PDF.",
-      "Each academic level consists of two semesters: First Semester and Second Semester.",
-      "If the highest result in the PDF is for a First Semester, return the same level as the current level.",
-      "If the highest result in the PDF is for a Second Semester, return the next higher level as the current level.",
-      "Do not guess values that are not present in the PDF.",
-      "Return the result strictly in valid JSON format.",
-      "Do not include explanations, markdown, or extra text outside JSON."
-    ]
-  },
-  "input": {
-    "document_type": "PDF",
-    "description": "University CGPA result slip containing semester-by-semester academic records",
-    "file": "{{CGPA_PDF_FILE}}"
-  },
-  "output_format": {
-    "cgpa": "number",
-    "total_units_completed_ctnup": "number",
-    "faculty": "string",
-    "department": "string",
-    "inferred_current_level": "string",
-    "confidence": "number between 0 and 1"
-  }
-}`,
+    systemInstruction: `
+    {
+      "task": "CGPA_PDF_ANALYSIS_AND_LEVEL_INFERENCE",
+      "instructions": {
+        "role": "You are an academic records analysis assistant.",
+        "goal": "Extract CGPA-related information from a student's university result PDF and infer the correct current academic level.",
+        "rules": [
+          "Read and analyze the uploaded PDF academic result.",
+          "Extract the student's CGPA.",
+          "Extract the total course units completed (CTNUP).",
+          "Extract the faculty, department, and level information shown in the PDF.",
+          "Each academic level consists of two semesters: First Semester and Second Semester.",
+          "If the highest result in the PDF is for a First Semester, return the same level as the current level.",
+          "If the highest result in the PDF is for a Second Semester, return the next higher level as the current level.",
+          "Do not guess values that are not present in the PDF.",
+          "Return the result strictly in valid JSON format.",
+          "Do not include explanations, markdown, or extra text outside JSON."
+        ],
+        exception: "If the uploaded document does not contain any of the required output information, and does not resemble an academic transcript or report, send this data in this exact output format {"error": "error message"}"
       },
-    ],
+      "input": {
+        "document_type": "PDF",
+        "description": "University CGPA result slip containing semester-by-semester academic records",
+        "file": "{{CGPA_PDF_FILE}}"
+      },
+      "output_format": [
+        if successful =  {
+          "cgpa": "number",
+          "total_units_completed_ctnup": "number",
+          "faculty": "string",
+          "department": "string",
+          "inferred_current_level": "string",
+          "confidence": "number between 0 and 1"
+        }
+        if error = {
+          "error": "error message"
+        }
+      ]
+  }`,
   };
 
-  const model = 'gemini-3-flash-preview';
-  
-  const newBase64pdf = base64Pdf.split(',')[1]
-
-  const contents: Content[] = [
-    {
-      role: "user",
-      parts: [
-        {
-          inlineData: {
-            mimeType: "application/pdf", 
-            data: newBase64pdf,
-          }
-        },
-      ],
-    },
-  ];
+  const cleanBase64 = base64Pdf.split(",").pop() || "";
 
   const response = await ai.models.generateContent({
-    model,
+    model: modelId,
     config,
-    contents,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            inlineData: {
+              mimeType: "application/pdf",
+              data: cleanBase64,
+            },
+          },
+          { text: "Extract the data from this transcript." },
+        ],
+      },
+    ],
   });
 
-  return response;
+  if (!response?.text) {
+    throw new Error("Response text is undefined or empty.");
+  }
+  return JSON.parse(response.text);
 };
