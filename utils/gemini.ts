@@ -31,6 +31,9 @@ export const extractDataFromTranscript = async (
           "Do not guess values that are not present in the PDF.",
           "Return the result strictly in valid JSON format.",
           "Do not include explanations, markdown, or extra text outside JSON."
+          "Ensure you return  faculty like this "FACULTY OF SCIENCE". All in upper case and start with FACULTY OF.",
+          "Ensure you return the level only e.g 100, 200, 300, 400, 500. Do not specify if the student has graduated, do not add level just the actual level only",
+          "Ensure you return department name only do not attach DEPARTMENT OF, e.g COMPUTER SCIENCE, PHYSICS. no need for "DEPARTMENT OF"."
         ],
         exception: "If the uploaded document does not contain any of the required output information, and does not resemble an academic transcript or report, send this data in this exact output format {"error": "error message"}"
       },
