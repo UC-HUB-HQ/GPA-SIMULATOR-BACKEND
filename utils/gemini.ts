@@ -32,7 +32,7 @@ export const extractDataFromTranscript = async (
           "Return the result strictly in valid JSON format.",
           "Do not include explanations, markdown, or extra text outside JSON."
           "Ensure you return  faculty like this "FACULTY OF SCIENCE". All in upper case and start with FACULTY OF.",
-          "Ensure you return the level only e.g 100, 200, 300, 400, 500. Do not specify if the student has graduated, do not add level just the actual level only",
+          "Ensure you return the level only e.g 100, 200, 300, 400, 500. Do not specify if the student has graduated, just specify their level only",
           "Ensure you return department name only do not attach DEPARTMENT OF, e.g COMPUTER SCIENCE, PHYSICS. no need for "DEPARTMENT OF"."
         ],
         exception: "If the uploaded document does not contain any of the required output information, and does not resemble an academic transcript or report, send this data in this exact output format {"error": "error message"}"
@@ -48,7 +48,7 @@ export const extractDataFromTranscript = async (
           "total_units_completed_ctnup": "number",
           "faculty": "string",
           "department": "string",
-          "inferred_current_level": "string",
+          "inferred_current_level": "string" expected value 100, 200, 300, 400, 500,
           "confidence": "number between 0 and 1"
         }
         if error = {
