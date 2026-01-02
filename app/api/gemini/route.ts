@@ -5,6 +5,7 @@ export async function POST(request: NextRequest) {
 
     try {
 
+        const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
         
         const formData = await request.formData();
 
@@ -31,17 +32,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Convert File → Buffer → base64
-
         const arrayBuffer = await file.arrayBuffer();
 
         const buffer = Buffer.from(arrayBuffer);
 
         const base64Pdf = buffer.toString("base64");
 
-        const geminiResponse = await extractDataFromTranscript(base64Pdf);
-
-        console.log("geminiResponseeeeeeee", geminiResponse)
+        const geminiResponse = await extractDataFromTranscript(
+          "base64Pdf",
+          apiKey ?? ""
+        );
 
         return NextResponse.json(
             { data: geminiResponse},
@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
 
     }
     catch (error) {
+        console.log(error)
         return NextResponse.json(
             { message: "Error with extracting details from document", error },
             { status: 500 }

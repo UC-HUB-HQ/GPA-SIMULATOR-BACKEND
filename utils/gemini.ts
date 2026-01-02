@@ -1,15 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 import { ThinkingLevel } from "@google/genai";
+import { Content } from "@google/genai";
 
-export const extractDataFromTranscript = async (base64Pdf: string) => {
-
-  console.log(
-    "process.env.GEMINI_API_KEYprocess.env.GEMINI_API_KEYprocess.env.GEMINI_API_KEY",
-    process.env.GEMINI_API_KEY
-  );
-
+export const extractDataFromTranscript = async (
+  base64Pdf: string,
+  apiKey: string
+) => {
   const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
+    apiKey: apiKey,
   });
 
   const tools = [
@@ -61,23 +59,25 @@ export const extractDataFromTranscript = async (base64Pdf: string) => {
     ],
   };
 
-  const model = "gemini-3-flash-preview";
+  const model = 'gemini-3-flash-preview';
+  
+  const newBase64pdf = base64Pdf.split(',')[1]
 
-  const contents = [
+  const contents: Content[] = [
     {
       role: "user",
       parts: [
         {
           inlineData: {
-            mimeType: "application/pdf",
-            data: base64Pdf,
-          },
+            mimeType: "application/pdf", 
+            data: newBase64pdf,
+          }
         },
       ],
     },
   ];
 
-  const response = await ai.models.generateContentStream({
+  const response = await ai.models.generateContent({
     model,
     config,
     contents,
@@ -85,5 +85,3 @@ export const extractDataFromTranscript = async (base64Pdf: string) => {
 
   return response;
 };
-
-
