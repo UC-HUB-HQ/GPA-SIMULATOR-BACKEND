@@ -50,9 +50,10 @@ export async function POST(request: NextRequest) {
 
     }
     catch (error) {
+        console.log(error)
         return NextResponse.json(
             { message: "Error with extracting details from document", error },
-            { status: 500 }
+            { status: 400 }
         );
     }
 }
