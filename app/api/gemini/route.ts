@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
           // Case 1: Error message contains serialized ApiError
           try {
             const cleaned = err.message.replace("Error [ApiError]: ", "");
-            const parsed = JSON.parse(cleaned) as GeminiErrorFormat;
+            const parsed = JSON.parse(cleaned);
     
             if (parsed?.error?.code) {
               status = parsed.error.code;
