@@ -58,21 +58,35 @@ export async function POST(request: NextRequest) {
         );
 
     }
-    catch (err: any) {
-        let message: string;
-        let code: number;
-         try {
-            const rawError = JSON.parse(err.message.replace("Error [ApiError]: ", ""));
-            const code = rawError.error.code; 
-             message = "Error with extracting details from document"
-        } 
-         catch (parseErr) {
-           code = parseErr.status
-             message = parseErr.message
-      }
+
+    catch (err: unknown) {
+        let message = "Failed to extract details from document";
+        let status = 500;
+    
+        // Handle known Gemini / API error format
+        if (err instanceof Error) {
+          // Case 1: Error message contains serialized ApiError
+          try {
+            const cleaned = err.message.replace("Error [ApiError]: ", "");
+            const parsed = JSON.parse(cleaned) as GeminiErrorFormat;
+    
+            if (parsed?.error?.code) {
+              status = parsed.error.code;
+              message = parsed.error.message || message;
+            }
+          } catch {
+            // Ignore JSON parse failure
+          }
+    
+          // Case 2: Plain error message
+          if (status === 500 && err.message) {
+            message = err.message;
+          }
+        }
+    
         return NextResponse.json(
-            { message: message},
-            { status: code }
+          { message },
+          { status }
         );
     }
 }
