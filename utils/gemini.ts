@@ -7,7 +7,7 @@ export const extractDataFromTranscript = async (
 
   const ai = new GoogleGenAI({ apiKey });
 
-  const modelId = "gemma-3-12b";
+  const modelId = "gemma-3-1b";
 
   const config = {
     responseMimeType: "application/json",
