@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     catch (error) {
         console.log(error)
         return NextResponse.json(
-            { message: "Error with extracting details from document", error },
-            { status: 400 }
+            { message: "Error with extracting details from document"},
+            { status: error.code }
         );
     }
 }
