@@ -47,7 +47,7 @@ export const extractDataFromTranscript = async (
           "13": { "facultyName": "SCHOOL OF AGRICULTURE", "departments": { "1311": "AGRICULTURE", "1321": "AGRICULTURAL ECONOMICS AND FARM MANAGEMENT", "1322": "AGRICULTURAL EXTENTION AND RURAL MANAGEMENT", "1323": "ANIMAL SCIENCE", "1324": "CROP PRODUCTION" } },
           "18": { "facultyName": "FACULTY OF ENVIRONMENTAL SCIENCE", "departments": { "1821": "BUILDING", "1881": "URBAN AND REGIONAL PLANNING", "1861": "SURVEY AND GEO-INFORMATICS", "1871": "QUANTITY SURVEYING", "1851": "INDUSTRIAL DESIGN", "1891": "FINE ARTS", "1831": "ESTATE MANAGEMENT", "1811": "ARCHITECTURE", "1841": "ENVIRONMENTAL MANAGEMENT" } }
         },
-        "exception": "If the document is not a transcript or missing key data, return: {\\\"error\\\": \\\"error message\\\"}"
+        "exception": "If the document is not a transcript or missing key data, return: {"error": "The provided document is not an academic transcript and does not contain the required CGPA, total units registered, faculty, department, or academic level information."}"
       },
       "output_format": {
         "cgpa": "number",
