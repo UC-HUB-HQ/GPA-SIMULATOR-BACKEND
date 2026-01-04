@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractDataFromTranscript } from "@/utils";
 
+
+interface geminiErrorFormat{
+    error: {
+        code: number;
+        message: string;
+        status: string
+    }
+}
+
 export async function POST(request: NextRequest) {
 
     try {
@@ -49,11 +58,11 @@ export async function POST(request: NextRequest) {
         );
 
     }
-    catch (error) {
-        console.log(error)
+    catch (err as geminiErrorFormat) {
+        console.log(err)
         return NextResponse.json(
             { message: "Error with extracting details from document"},
-            { status: error.code }
+            { status: err.error.code }
         );
     }
 }
