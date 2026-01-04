@@ -60,25 +60,20 @@ export async function POST(request: NextRequest) {
     }
 
     catch (err: unknown) {
-        let message = "Failed to extract details from document";
+        let message = "Our analysis model is currently not available, try again later or proceed manually.";
         let status = 500;
     
-        // Handle known Gemini / API error format
         if (err instanceof Error) {
-          // Case 1: Error message contains serialized ApiError
           try {
             const cleaned = err.message.replace("Error [ApiError]: ", "");
             const parsed = JSON.parse(cleaned);
     
             if (parsed?.error?.code) {
               status = parsed.error.code;
-              message = parsed.error.message || message;
             }
           } catch {
-            // Ignore JSON parse failure
           }
     
-          // Case 2: Plain error message
           if (status === 500 && err.message) {
             message = err.message;
           }
