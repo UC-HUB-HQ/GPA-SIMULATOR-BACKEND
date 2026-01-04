@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
             const parsed = JSON.parse(cleaned);
     
             if (parsed?.error?.code) {
+                console.log(parsed.error.message)
               status = parsed.error.code;
             }
           } catch {
