@@ -59,13 +59,20 @@ export async function POST(request: NextRequest) {
 
     }
     catch (err: any) {
-        console.log(err)
-         const rawError = JSON.parse(err.message.replace("Error [ApiError]: ", ""));
-        const code = rawError.error.code; 
-        console.log("Extracted Code:", code); // 404
+        let message: string;
+        let code: number;
+         try {
+            const rawError = JSON.parse(err.message.replace("Error [ApiError]: ", ""));
+            const code = rawError.error.code; 
+             message = "Error with extracting details from document"
+        } 
+         catch (parseErr) {
+           code = parseErr.status
+             message = parseErr.message
+      }
         return NextResponse.json(
-            { message: "Error with extracting details from document"},
-            { status: err.error.code }
+            { message: message},
+            { status: code }
         );
     }
 }
