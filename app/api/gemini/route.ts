@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         );
 
     }
-    catch (err: geminiErrorFormat) {
+    catch (err: any) {
         console.log(err)
         return NextResponse.json(
             { message: "Error with extracting details from document"},
