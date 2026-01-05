@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractDataFromTranscript } from "@/utils";
 
+
+interface geminiErrorFormat{
+    error: {
+        code: number;
+        message: string;
+        status: string
+    }
+}
+
 export async function POST(request: NextRequest) {
 
     try {
@@ -49,11 +58,31 @@ export async function POST(request: NextRequest) {
         );
 
     }
-    catch (error) {
-        console.log(error)
+
+    catch (err: unknown) {
+        let message = "Our analysis model is currently not available, try again later or proceed manually.";
+        let status = 500;
+    
+        if (err instanceof Error) {
+          try {
+            const cleaned = err.message.replace("Error [ApiError]: ", "");
+            const parsed = JSON.parse(cleaned);
+    
+            if (parsed?.error?.code) {
+                console.log(parsed.error.message)
+              status = parsed.error.code;
+            }
+          } catch {
+          }
+    
+          if (status === 500 && err.message) {
+            message = err.message;
+          }
+        }
+    
         return NextResponse.json(
-            { message: "Error with extracting details from document", error },
-            { status: 400 }
+          { message },
+          { status }
         );
     }
 }
