@@ -7,7 +7,7 @@ export const extractDataFromTranscript = async (
 
   const ai = new GoogleGenAI({ apiKey });
 
-  const modelId = "gemini-2.0-flash-lite";
+  const modelId = "gemini-flash-lite-latest";
 
   const config = {
     responseMimeType: "application/json",
